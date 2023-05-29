@@ -22,7 +22,9 @@ Automatic Chord Recognition tools
 
 To install library, run:
 ```
-$ pip install autochord
+$ cat requirements.txt | xargs -n1 -L1 python -m pip install
+$ python -m pip install . # runs setup
+$ # pip install autochord
 ```
 
 `autochord` provides a very simple API for performing chord recognition:
