@@ -6,16 +6,17 @@ import pkg_resources
 import numpy as np
 from scipy.signal import resample
 import gdown
+import urllib.request
 import librosa
 import vamp
 import lazycats.np as catnp
 from tensorflow import keras
 
-
 _CHROMA_VAMP_LIB = pkg_resources.resource_filename('autochord', 'res/nnls-chroma.so')
 _CHROMA_VAMP_KEY = 'nnls-chroma:nnls-chroma'
 
-_CHORD_MODEL_URL = 'https://drive.google.com/uc?id=1XBn7FyYjF8Ff6EuC7PjwwPzFBLRXGP7n'
+# 'https://drive.google.com/uc?id=1XBn7FyYjF8Ff6EuC7PjwwPzFBLRXGP7n'
+_CHORD_MODEL_URL = 'https://github.com/stef-15/autochord/releases/download/model-v1/chroma-seq-bilstm-crf-v1.zip' 
 _EXT_RES_DIR = os.path.join(os.path.expanduser('~'), '.autochord')
 _CHORD_MODEL_DIR = os.path.join(_EXT_RES_DIR, 'chroma-seq-bilstm-crf-v1')
 _CHORD_MODEL = None
@@ -55,10 +56,13 @@ def _setup_chroma_vamp():
           f'Try copying `{_CHROMA_VAMP_LIB}` in any of following directories: {vamp_paths}')
 
 def _download_model():
+    print('autochord: downloading model...')
     os.makedirs(_EXT_RES_DIR, exist_ok=True)
     model_zip = os.path.join(_EXT_RES_DIR, 'model.zip')
-    gdown.download(_CHORD_MODEL_URL, model_zip, quiet=False)
-
+    
+    urllib.request.urlretrieve(_CHORD_MODEL_URL, model_zip)
+    # gdown.download(_CHORD_MODEL_URL, model_zip, quiet=False)
+    
     model_files = gdown.extractall(model_zip)
     model_files.sort()
     os.remove(model_zip)
